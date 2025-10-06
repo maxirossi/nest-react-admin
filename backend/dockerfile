@@ -5,13 +5,11 @@ WORKDIR /app
 COPY package.json .
 COPY yarn.lock .
 
-RUN yarn
+RUN yarn install
 
 COPY . .
 
 RUN yarn build
-
-#---
 
 FROM node:alpine
 
