@@ -1,5 +1,7 @@
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'react-feather';
 
+import PAGINATION_CONFIG from '../../config/pagination';
+
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
@@ -64,11 +66,11 @@ export default function Pagination({
           onChange={(e) => onPageSizeChange(parseInt(e.target.value))}
           className="input text-sm py-1 px-2 w-20"
         >
-          <option value={5}>5</option>
-          <option value={10}>10</option>
-          <option value={25}>25</option>
-          <option value={50}>50</option>
-          <option value={100}>100</option>
+          {PAGINATION_CONFIG.PAGE_SIZE_OPTIONS.map((size) => (
+            <option key={size} value={size}>
+              {size}
+            </option>
+          ))}
         </select>
         <span className="text-sm text-gray-600">por página</span>
       </div>

@@ -116,7 +116,7 @@ export default function Courses() {
           currentPage={pagination.currentPage}
           totalPages={pagination.totalPages}
           pageSize={pagination.pageSize}
-          totalItems={pagination.totalItems}
+          totalItems={data?.length || 0}
           hasNextPage={pagination.hasNextPage}
           hasPreviousPage={pagination.hasPreviousPage}
           onPageChange={pagination.setCurrentPage}
