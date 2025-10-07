@@ -3,6 +3,9 @@ import { Loader, Plus, RefreshCw, X } from 'react-feather';
 import { useForm } from 'react-hook-form';
 import { useQuery, useQueryClient } from 'react-query';
 
+import usePagination from '../hooks/usePagination';
+import Pagination from '../components/shared/Pagination';
+
 import CoursesTable from '../components/courses/CoursesTable';
 import Layout from '../components/layout';
 import Modal from '../components/shared/Modal';
@@ -19,6 +22,7 @@ export default function Courses() {
 
   const { authenticatedUser } = useAuth();
   const queryClient = useQueryClient();
+  
   const { data, isLoading, refetch } = useQuery(
     ['courses', name, description],
     () =>
@@ -27,6 +31,10 @@ export default function Courses() {
         description: description || undefined,
       }),
   );
+
+  const pagination = usePagination({
+    totalItems: data?.length || 0,
+  });
 
   const {
     register,
@@ -97,7 +105,28 @@ export default function Courses() {
         </div>
       </div>
 
-      <CoursesTable data={data} isLoading={isLoading} onRefresh={refetch} />
+      <CoursesTable 
+        data={data?.slice(pagination.startIndex, pagination.endIndex)} 
+        isLoading={isLoading} 
+        onRefresh={refetch} 
+      />
+      
+      {data && data.length > 0 && (
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          pageSize={pagination.pageSize}
+          totalItems={pagination.totalItems}
+          hasNextPage={pagination.hasNextPage}
+          hasPreviousPage={pagination.hasPreviousPage}
+          onPageChange={pagination.setCurrentPage}
+          onPageSizeChange={pagination.setPageSize}
+          onNextPage={pagination.goToNextPage}
+          onPreviousPage={pagination.goToPreviousPage}
+          onFirstPage={pagination.goToFirstPage}
+          onLastPage={pagination.goToLastPage}
+        />
+      )}
 
       {/* Add User Modal */}
       <Modal show={addCourseShow}>

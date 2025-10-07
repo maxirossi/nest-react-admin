@@ -4,6 +4,14 @@ import CreateCourseRequest from '../models/course/CreateCourseRequest';
 import UpdateCourseRequest from '../models/course/UpdateCourseRequest';
 import apiService from './ApiService';
 
+interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 class UserService {
   async save(createCourseRequest: CreateCourseRequest): Promise<void> {
     await apiService.post('/api/courses', createCourseRequest);
@@ -12,6 +20,16 @@ class UserService {
   async findAll(courseQuery: CourseQuery): Promise<Course[]> {
     return (
       await apiService.get<Course[]>('/api/courses', { params: courseQuery })
+    ).data;
+  }
+
+  async findAllPaginated(
+    courseQuery: CourseQuery & { page?: number; pageSize?: number }
+  ): Promise<PaginatedResponse<Course>> {
+    return (
+      await apiService.get<PaginatedResponse<Course>>('/api/courses', { 
+        params: courseQuery 
+      })
     ).data;
   }
 
