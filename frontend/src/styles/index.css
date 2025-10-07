@@ -1,52 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Nunito+Sans:wght@300;400;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --brand-primary: #c1292e;
+  --brand-background: #ffffff;
+  --brand-active: #c1292e;
+  --brand-header-background: #e2e1e1;
+  --primary-red: #c1292e;
+  --red-hover: #c1292e;
+  --primary-white: #ffffff;
+  --white-hover: #f2f2f2;
+}
 
 @layer base {
   html,
   body,
   #root {
     @apply h-full;
+    font-family: 'Roboto', 'Helvetica', 'Helvetica Neue', 'Nunito Sans', sans-serif;
   }
   h1 {
-    @apply text-2xl;
+    @apply text-2xl font-semibold;
   }
   h2 {
-    @apply text-xl;
+    @apply text-xl font-medium;
   }
   h3 {
-    @apply text-lg;
+    @apply text-lg font-medium;
   }
   a {
-    @apply text-blue-600 underline;
+    @apply text-red-600 underline;
   }
 }
 
 @layer components {
   .btn {
-    @apply p-3 bg-blue-500 rounded-md focus:outline-none text-white;
-    @apply hover:bg-blue-700 transition-all;
+    @apply p-3 rounded-md focus:outline-none text-white transition-all;
     @apply focus:ring disabled:opacity-50;
+    background-color: var(--brand-primary);
+  }
+  .btn:hover {
+    background-color: var(--red-hover);
   }
   .btn.danger {
     @apply bg-red-500 hover:bg-red-700;
   }
   .input {
     @apply rounded-md border-gray-300 transition-colors disabled:opacity-50;
+    border-color: #d1d5db;
+  }
+  .input:focus {
+    @apply border-red-500 ring-red-500;
   }
   .card {
-    @apply p-5 rounded-md bg-white border;
+    @apply p-5 rounded-md border;
+    background-color: var(--brand-background);
   }
   .table-container {
     @apply border rounded-lg mt-5 shadow overflow-x-auto;
+    background-color: var(--brand-background);
   }
   .table-filter {
     @apply flex flex-col lg:flex-row gap-5 rounded-lg p-3 shadow overflow-x-auto border;
+    background-color: var(--brand-background);
   }
   .sidebar {
-    @apply fixed h-full w-72 p-5 shadow flex flex-col transform -translate-x-72 bg-white lg:translate-x-0 transition-transform;
+    @apply fixed h-full w-72 p-5 shadow flex flex-col transform -translate-x-72 lg:translate-x-0 transition-transform;
+    background: linear-gradient(135deg, var(--brand-primary) 0%, #a01e23 100%);
   }
   .sidebar.show {
     @apply translate-x-0 !important;
+  }
+  .sidebar-header {
+    @apply flex items-center justify-center mb-8;
+  }
+  .sidebar-logo {
+    @apply w-32 h-auto;
+  }
+  .sidebar-item {
+    @apply flex items-center p-3 rounded-md text-white transition-all mb-2;
+  }
+  .sidebar-item:hover {
+    @apply bg-white bg-opacity-20;
+  }
+  .sidebar-item.active {
+    @apply bg-white bg-opacity-30;
+  }
+  .main-content {
+    @apply lg:ml-72;
+    background-color: var(--brand-background);
+  }
+  .header {
+    @apply p-4 shadow-sm;
+    background-color: var(--brand-header-background);
   }
 }

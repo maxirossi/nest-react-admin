@@ -23,9 +23,15 @@ export default function Sidebar({ className }: SidebarProps) {
 
   return (
     <div className={'sidebar ' + className}>
-      <Link to="/" className="no-underline text-black">
-        <h1 className="font-semibold text-center">Carna Project</h1>
-      </Link>
+      <div className="sidebar-header">
+        <Link to="/" className="no-underline">
+          <img 
+            src="/urbano-logo-white.png" 
+            alt="Urbano Logo" 
+            className="sidebar-logo"
+          />
+        </Link>
+      </div>
       <nav className="mt-5 flex flex-col gap-3 flex-grow">
         <SidebarItem to="/">
           <Home /> Dashboard
@@ -40,7 +46,7 @@ export default function Sidebar({ className }: SidebarProps) {
         ) : null}
       </nav>
       <button
-        className="text-red-500 rounded-md p-3 transition-colors flex gap-3 justify-center items-center font-semibold focus:outline-none"
+        className="sidebar-item text-white rounded-md p-3 transition-colors flex gap-3 justify-center items-center font-semibold focus:outline-none hover:bg-white hover:bg-opacity-20"
         onClick={handleLogout}
       >
         <LogOut /> Logout
