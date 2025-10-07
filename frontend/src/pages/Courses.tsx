@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Loader, Plus, X } from 'react-feather';
+import { Loader, Plus, RefreshCw, X } from 'react-feather';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
@@ -18,16 +18,13 @@ export default function Courses() {
   const [error, setError] = useState<string>();
 
   const { authenticatedUser } = useAuth();
-  const { data, isLoading } = useQuery(
+  const { data, isLoading, refetch } = useQuery(
     ['courses', name, description],
     () =>
       courseService.findAll({
         name: name || undefined,
         description: description || undefined,
       }),
-    {
-      refetchInterval: 1000,
-    },
   );
 
   const {
@@ -50,16 +47,28 @@ export default function Courses() {
 
   return (
     <Layout>
-      <h1 className="font-semibold text-3xl mb-5">Manage Courses</h1>
+      <div className="flex justify-between items-center mb-5">
+        <h1 className="font-semibold text-3xl">Manage Courses</h1>
+        <div className="flex gap-2">
+          <button
+            className="btn flex gap-2"
+            onClick={() => refetch()}
+            disabled={isLoading}
+          >
+            <RefreshCw className={isLoading ? 'animate-spin' : ''} />
+            Refresh
+          </button>
+          {authenticatedUser.role !== 'user' ? (
+            <button
+              className="btn flex gap-2"
+              onClick={() => setAddCourseShow(true)}
+            >
+              <Plus /> Add Course
+            </button>
+          ) : null}
+        </div>
+      </div>
       <hr />
-      {authenticatedUser.role !== 'user' ? (
-        <button
-          className="btn my-5 flex gap-2 w-full sm:w-auto justify-center"
-          onClick={() => setAddCourseShow(true)}
-        >
-          <Plus /> Add Course
-        </button>
-      ) : null}
 
       <div className="table-filter">
         <div className="flex flex-row gap-5">

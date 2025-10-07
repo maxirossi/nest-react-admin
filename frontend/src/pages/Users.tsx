@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Loader, Plus, X } from 'react-feather';
+import { Loader, Plus, RefreshCw, X } from 'react-feather';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
@@ -21,7 +21,7 @@ export default function Users() {
   const [addUserShow, setAddUserShow] = useState<boolean>(false);
   const [error, setError] = useState<string>();
 
-  const { data, isLoading } = useQuery(
+  const { data, isLoading, refetch } = useQuery(
     ['users', firstName, lastName, username, role],
     async () => {
       return (
@@ -32,9 +32,6 @@ export default function Users() {
           role: role || undefined,
         })
       ).filter((user) => user.id !== authenticatedUser.id);
-    },
-    {
-      refetchInterval: 1000,
     },
   );
 
@@ -58,14 +55,26 @@ export default function Users() {
 
   return (
     <Layout>
-      <h1 className="font-semibold text-3xl mb-5">Manage Users</h1>
+      <div className="flex justify-between items-center mb-5">
+        <h1 className="font-semibold text-3xl">Manage Users</h1>
+        <div className="flex gap-2">
+          <button
+            className="btn flex gap-2"
+            onClick={() => refetch()}
+            disabled={isLoading}
+          >
+            <RefreshCw className={isLoading ? 'animate-spin' : ''} />
+            Refresh
+          </button>
+          <button
+            className="btn flex gap-2"
+            onClick={() => setAddUserShow(true)}
+          >
+            <Plus /> Add User
+          </button>
+        </div>
+      </div>
       <hr />
-      <button
-        className="btn my-5 flex gap-2 w-full sm:w-auto justify-center"
-        onClick={() => setAddUserShow(true)}
-      >
-        <Plus /> Add User
-      </button>
 
       <div className="table-filter mt-2">
         <div className="flex flex-row gap-5">

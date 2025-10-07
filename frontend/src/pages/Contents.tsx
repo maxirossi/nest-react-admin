@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Loader, Plus, X } from 'react-feather';
+import { Loader, Plus, RefreshCw, X } from 'react-feather';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 import { useParams } from 'react-router';
@@ -30,16 +30,13 @@ export default function Course() {
     reset,
   } = useForm<CreateContentRequest>();
 
-  const { data, isLoading } = useQuery(
+  const { data, isLoading, refetch } = useQuery(
     [`contents-${id}`, name, description],
     async () =>
       contentService.findAll(id, {
         name: name || undefined,
         description: description || undefined,
       }),
-    {
-      refetchInterval: 1000,
-    },
   );
 
   const saveCourse = async (createContentRequest: CreateContentRequest) => {
@@ -55,18 +52,30 @@ export default function Course() {
 
   return (
     <Layout>
-      <h1 className="font-semibold text-3xl mb-5">
-        {!userQuery.isLoading ? `${userQuery.data.name} Contents` : ''}
-      </h1>
+      <div className="flex justify-between items-center mb-5">
+        <h1 className="font-semibold text-3xl">
+          {!userQuery.isLoading ? `${userQuery.data.name} Contents` : ''}
+        </h1>
+        <div className="flex gap-2">
+          <button
+            className="btn flex gap-2"
+            onClick={() => refetch()}
+            disabled={isLoading}
+          >
+            <RefreshCw className={isLoading ? 'animate-spin' : ''} />
+            Refresh
+          </button>
+          {authenticatedUser.role !== 'user' ? (
+            <button
+              className="btn flex gap-2"
+              onClick={() => setAddContentShow(true)}
+            >
+              <Plus /> Add Content
+            </button>
+          ) : null}
+        </div>
+      </div>
       <hr />
-      {authenticatedUser.role !== 'user' ? (
-        <button
-          className="btn my-5 flex gap-2 w-full sm:w-auto justify-center"
-          onClick={() => setAddContentShow(true)}
-        >
-          <Plus /> Add Content
-        </button>
-      ) : null}
 
       <div className="table-filter">
         <div className="flex flex-row gap-5">
