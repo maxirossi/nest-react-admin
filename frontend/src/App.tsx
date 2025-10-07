@@ -40,7 +40,6 @@ export default function App() {
         <PrivateRoute exact path="/users" component={Users} roles={['admin']} />
         <PrivateRoute exact path="/courses" component={Courses} />
         <PrivateRoute exact path="/courses/:id" component={Contents} />
-
         <AuthRoute exact path="/login" component={Login} />
       </Switch>
     </Router>
