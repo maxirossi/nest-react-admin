@@ -2,28 +2,35 @@ services:
   database:
     image: postgres:alpine
     container_name: database
-    ports:
-      - "5432:5432"
     environment:
-      POSTGRES_DB: carna-database
-      POSTGRES_USER: carna
-      POSTGRES_PASSWORD: IjSJmKN1fc#DZBL*NHbVoxIh65JvsFFDO@so
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   backend:
     container_name: backend
     build:
       context: backend
       dockerfile: Dockerfile
+    ports:
+      - "${BACKEND_PORT}:5000"
     depends_on:
       - database
     environment:
-      DATABASE_HOST: database
-      DATABASE_PORT: 5432
-      DATABASE_USERNAME: carna
-      DATABASE_PASSWORD: IjSJmKN1fc#DZBL*NHbVoxIh65JvsFFDO@so
-      DATABASE_NAME: "carna-database"
-      JWT_SECRET: 4125442A472D4B6150645367556B58703273357638792F423F4528482B4D6251
-      JWT_REFRESH_SECRET: 576E5A7134743777217A25432A462D4A614E645267556B58703273357538782F
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      BACKEND_PORT: ${BACKEND_PORT}
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      ADMIN_FIRST_NAME: ${ADMIN_FIRST_NAME}
+      ADMIN_LAST_NAME: ${ADMIN_LAST_NAME}
 
   frontend:
     container_name: frontend
@@ -31,6 +38,9 @@ services:
       context: frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:80"
+      - "${FRONTEND_PORT}:${FRONTEND_INTERNAL_PORT}"
     depends_on:
       - backend
+
+volumes:
+  postgres_data:

@@ -2,11 +2,11 @@ FROM node:18-alpine as build
 
 WORKDIR /app
 
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+COPY package.json package-lock.json ./
+RUN npm install
 COPY . .
 ENV NODE_OPTIONS="--openssl-legacy-provider"
-RUN yarn build
+RUN npm run build
 
 #---
 
