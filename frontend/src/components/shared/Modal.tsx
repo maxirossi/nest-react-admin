@@ -35,6 +35,6 @@ flex justify-center items-center backdrop-filter backdrop-blur transition-opacit
         {children}
       </div>
     </div>,
-    document.getElementById('modal'),
+    document.getElementById('modal')
   );
 }

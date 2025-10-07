@@ -18,7 +18,7 @@ ReactDOM.render(
       </QueryClientProvider>
     </AuthenticationProvider>
   </React.StrictMode>,
-  document.getElementById('root'),
+  document.getElementById('root')
 );
 
 reportWebVitals();

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AlertTriangle, Loader, X } from 'react-feather';
 import { useForm } from 'react-hook-form';
+import { useQueryClient } from 'react-query';
 import { Link } from 'react-router-dom';
 
 import useAuth from '../../hooks/useAuth';
@@ -18,6 +19,7 @@ interface UsersTableProps {
 
 export default function CoursesTable({ data, isLoading }: UsersTableProps) {
   const { authenticatedUser } = useAuth();
+  const queryClient = useQueryClient();
   const [deleteShow, setDeleteShow] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [selectedCourseId, setSelectedCourseId] = useState<string>();
@@ -37,6 +39,8 @@ export default function CoursesTable({ data, isLoading }: UsersTableProps) {
       setIsDeleting(true);
       await courseService.delete(selectedCourseId);
       setDeleteShow(false);
+      // Refresh automático después de eliminar
+      await queryClient.invalidateQueries(['courses']);
     } catch (error) {
       setError(error.response.data.message);
     } finally {
@@ -50,6 +54,8 @@ export default function CoursesTable({ data, isLoading }: UsersTableProps) {
       setUpdateShow(false);
       reset();
       setError(null);
+      // Refresh automático después de actualizar
+      await queryClient.invalidateQueries(['courses']);
     } catch (error) {
       setError(error.response.data.message);
     }

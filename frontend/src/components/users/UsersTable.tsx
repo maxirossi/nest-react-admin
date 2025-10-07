@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AlertTriangle, Loader, X } from 'react-feather';
 import { useForm } from 'react-hook-form';
+import { useQueryClient } from 'react-query';
 
 import UpdateUserRequest from '../../models/user/UpdateUserRequest';
 import User from '../../models/user/User';
@@ -15,6 +16,7 @@ interface UsersTableProps {
 }
 
 export default function UsersTable({ data, isLoading }: UsersTableProps) {
+  const queryClient = useQueryClient();
   const [deleteShow, setDeleteShow] = useState<boolean>(false);
   const [updateShow, setUpdateShow] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -34,6 +36,8 @@ export default function UsersTable({ data, isLoading }: UsersTableProps) {
       setIsDeleting(true);
       await userService.delete(selectedUserId);
       setDeleteShow(false);
+      // Refresh automático después de eliminar
+      await queryClient.invalidateQueries(['users']);
     } catch (error) {
       setError(error.response.data.message);
     } finally {
@@ -47,6 +51,8 @@ export default function UsersTable({ data, isLoading }: UsersTableProps) {
       setUpdateShow(false);
       reset();
       setError(null);
+      // Refresh automático después de actualizar
+      await queryClient.invalidateQueries(['users']);
     } catch (error) {
       setError(error.response.data.message);
     }
@@ -103,7 +109,7 @@ export default function UsersTable({ data, isLoading }: UsersTableProps) {
                       </button>
                     </TableItem>
                   </tr>
-                ),
+                )
               )}
         </Table>
 

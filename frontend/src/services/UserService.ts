@@ -33,7 +33,7 @@ class UserService {
       username: username || undefined,
       role: role || undefined,
       isActive,
-      password: password || undefined
+      password: password || undefined,
     });
   }
 

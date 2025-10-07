@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Loader, Plus, X } from 'react-feather';
 import { useForm } from 'react-hook-form';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 
 import CoursesTable from '../components/courses/CoursesTable';
 import Layout from '../components/layout';
 import Modal from '../components/shared/Modal';
 import useAuth from '../hooks/useAuth';
+import useDebounce from '../hooks/useDebounce';
 import CreateCourseRequest from '../models/course/CreateCourseRequest';
 import courseService from '../services/CourseService';
 
@@ -18,12 +19,23 @@ export default function Courses() {
   const [error, setError] = useState<string>();
 
   const { authenticatedUser } = useAuth();
-  const { data, isLoading, refetch } = useQuery(
-    ['courses', name, description],
+  const queryClient = useQueryClient();
+
+  // Debounce para los filtros
+  const debouncedName = useDebounce(name, 500);
+  const debouncedDescription = useDebounce(description, 500);
+
+  // Solo buscar si tiene 3 o más caracteres
+  const searchName = debouncedName.length >= 3 ? debouncedName : '';
+  const searchDescription =
+    debouncedDescription.length >= 3 ? debouncedDescription : '';
+
+  const { data, isLoading } = useQuery(
+    ['courses', searchName, searchDescription],
     () =>
       courseService.findAll({
-        name: name || undefined,
-        description: description || undefined
+        name: searchName || undefined,
+        description: searchDescription || undefined,
       })
   );
 
@@ -39,7 +51,9 @@ export default function Courses() {
       await courseService.save(createCourseRequest);
       setAddCourseShow(false);
       reset();
-      setError(null)
+      setError(null);
+      // Refresh automático después de crear
+      await queryClient.invalidateQueries(['courses']);
     } catch (error) {
       setError(error.response.data.message);
     }

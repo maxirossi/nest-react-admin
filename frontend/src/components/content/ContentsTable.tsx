@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AlertTriangle, Loader, X } from 'react-feather';
 import { useForm } from 'react-hook-form';
+import { useQueryClient } from 'react-query';
 
 import useAuth from '../../hooks/useAuth';
 import Content from '../../models/content/Content';
@@ -22,6 +23,7 @@ export default function ContentsTable({
   courseId,
 }: ContentsTableProps) {
   const { authenticatedUser } = useAuth();
+  const queryClient = useQueryClient();
   const [deleteShow, setDeleteShow] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [selectedContentId, setSelectedContentId] = useState<string>();
@@ -41,6 +43,8 @@ export default function ContentsTable({
       setIsDeleting(true);
       await contentService.delete(courseId, selectedContentId);
       setDeleteShow(false);
+      // Refresh automático después de eliminar
+      await queryClient.invalidateQueries([`contents-${courseId}`]);
     } catch (error) {
       setError(error.response.data.message);
     } finally {
@@ -53,11 +57,13 @@ export default function ContentsTable({
       await contentService.update(
         courseId,
         selectedContentId,
-        updateContentRequest,
+        updateContentRequest
       );
       setUpdateShow(false);
       reset();
       setError(null);
+      // Refresh automático después de actualizar
+      await queryClient.invalidateQueries([`contents-${courseId}`]);
     } catch (error) {
       setError(error.response.data.message);
     }

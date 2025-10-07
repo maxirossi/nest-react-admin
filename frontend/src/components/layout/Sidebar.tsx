@@ -22,21 +22,22 @@ export default function Sidebar({ className }: SidebarProps) {
   };
 
   return (
-    <div 
+    <div
       className={'sidebar ' + className}
       style={{
-        backgroundImage: 'linear-gradient(135deg, rgba(60, 60, 60, 0.95) 0%, rgba(40, 40, 40, 0.95) 100%), url(/sidemenu-bg.jpg)',
+        backgroundImage:
+          'linear-gradient(135deg, rgba(60, 60, 60, 0.95) 0%, rgba(40, 40, 40, 0.95) 100%), url(/sidemenu-bg.jpg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        backgroundBlendMode: 'multiply'
+        backgroundBlendMode: 'multiply',
       }}
     >
       <div className="sidebar-header">
         <Link to="/" className="no-underline">
-          <img 
-            src="/urbano-logo-white.png" 
-            alt="Urbano Logo" 
+          <img
+            src="/urbano-logo-white.png"
+            alt="Urbano Logo"
             className="sidebar-logo"
           />
         </Link>

@@ -22,7 +22,7 @@ class ContentService {
   ): Promise<void> {
     await apiService.post(
       `/api/courses/${courseId}/contents`,
-      createContentRequest,
+      createContentRequest
     );
   }
 
@@ -33,7 +33,7 @@ class ContentService {
   ): Promise<void> {
     await apiService.put(
       `/api/courses/${courseId}/contents/${id}`,
-      updateContentRequest,
+      updateContentRequest
     );
   }
 
