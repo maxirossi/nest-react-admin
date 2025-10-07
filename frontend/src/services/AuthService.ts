@@ -7,7 +7,7 @@ import apiService from './ApiService';
 class AuthService {
   async login(loginRequest: LoginRequest): Promise<AuthResponse> {
     const authResponse = (
-      await axios.post<AuthResponse>('/api/auth/login', loginRequest, {
+      await apiService.post<AuthResponse>('/api/auth/login', loginRequest, {
         withCredentials: true,
       })
     ).data;
@@ -22,7 +22,7 @@ class AuthService {
 
   async refresh(): Promise<AuthResponse> {
     const authResponse = (
-      await axios.post<AuthResponse>(
+      await apiService.post<AuthResponse>(
         '/api/auth/refresh',
         {},
         { withCredentials: true },
