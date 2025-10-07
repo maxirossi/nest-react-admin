@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Loader, Plus, RefreshCw, X } from 'react-feather';
+import { Loader, Plus, X } from 'react-feather';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
@@ -29,7 +29,7 @@ export default function Users() {
           firstName: firstName || undefined,
           lastName: lastName || undefined,
           username: username || undefined,
-          role: role || undefined,
+          role: role || undefined
         })
       ).filter((user) => user.id !== authenticatedUser.id);
     },
@@ -46,8 +46,8 @@ export default function Users() {
     try {
       await userService.save(createUserRequest);
       setAddUserShow(false);
-      setError(null);
-      reset();
+      setError(null)
+      reset()
     } catch (error) {
       setError(error.response.data.message);
     }
@@ -58,14 +58,6 @@ export default function Users() {
       <div className="flex justify-between items-center mb-5">
         <h1 className="font-semibold text-3xl">Manage Users</h1>
         <div className="flex gap-2">
-          <button
-            className="btn flex gap-2"
-            onClick={() => refetch()}
-            disabled={isLoading}
-          >
-            <RefreshCw className={isLoading ? 'animate-spin' : ''} />
-            Refresh
-          </button>
           <button
             className="btn flex gap-2"
             onClick={() => setAddUserShow(true)}

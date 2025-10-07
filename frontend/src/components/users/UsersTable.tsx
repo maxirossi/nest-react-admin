@@ -77,7 +77,7 @@ export default function UsersTable({ data, isLoading }: UsersTableProps) {
                     <TableItem>{role}</TableItem>
                     <TableItem className="text-right">
                       <button
-                        className="text-indigo-600 hover:text-indigo-900 focus:outline-none"
+                        className="btn-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors"
                         onClick={() => {
                           setSelectedUserId(id);
 
@@ -93,7 +93,7 @@ export default function UsersTable({ data, isLoading }: UsersTableProps) {
                         Edit
                       </button>
                       <button
-                        className="text-red-600 hover:text-red-900 ml-3 focus:outline-none"
+                        className="btn-sm bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors ml-3"
                         onClick={() => {
                           setSelectedUserId(id);
                           setDeleteShow(true);

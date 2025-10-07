@@ -25,7 +25,7 @@ class AuthService {
       await axios.post<AuthResponse>(
         '/api/auth/refresh',
         {},
-        { withCredentials: true },
+        { withCredentials: true }
       )
     ).data;
     apiService.defaults.headers.Authorization = `Bearer ${authResponse.token}`;
@@ -33,4 +33,5 @@ class AuthService {
   }
 }
 
-export default new AuthService();
+const authService = new AuthService();
+export default authService;

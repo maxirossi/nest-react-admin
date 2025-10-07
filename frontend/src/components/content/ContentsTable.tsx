@@ -79,7 +79,7 @@ export default function ContentsTable({
                   <TableItem className="text-right">
                     {['admin', 'editor'].includes(authenticatedUser.role) ? (
                       <button
-                        className="text-indigo-600 hover:text-indigo-900 focus:outline-none"
+                        className="btn-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors"
                         onClick={() => {
                           setSelectedContentId(id);
 
@@ -94,7 +94,7 @@ export default function ContentsTable({
                     ) : null}
                     {authenticatedUser.role === 'admin' ? (
                       <button
-                        className="text-red-600 hover:text-red-900 ml-3 focus:outline-none"
+                        className="btn-sm bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors ml-3"
                         onClick={() => {
                           setSelectedContentId(id);
                           setDeleteShow(true);

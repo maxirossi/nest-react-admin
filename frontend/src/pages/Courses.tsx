@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Loader, Plus, RefreshCw, X } from 'react-feather';
+import { Loader, Plus, X } from 'react-feather';
 import { useForm } from 'react-hook-form';
 import { useQuery } from 'react-query';
 
@@ -23,8 +23,8 @@ export default function Courses() {
     () =>
       courseService.findAll({
         name: name || undefined,
-        description: description || undefined,
-      }),
+        description: description || undefined
+      })
   );
 
   const {
@@ -39,7 +39,7 @@ export default function Courses() {
       await courseService.save(createCourseRequest);
       setAddCourseShow(false);
       reset();
-      setError(null);
+      setError(null)
     } catch (error) {
       setError(error.response.data.message);
     }
@@ -50,14 +50,6 @@ export default function Courses() {
       <div className="flex justify-between items-center mb-5">
         <h1 className="font-semibold text-3xl">Manage Courses</h1>
         <div className="flex gap-2">
-          <button
-            className="btn flex gap-2"
-            onClick={() => refetch()}
-            disabled={isLoading}
-          >
-            <RefreshCw className={isLoading ? 'animate-spin' : ''} />
-            Refresh
-          </button>
           {authenticatedUser.role !== 'user' ? (
             <button
               className="btn flex gap-2"
