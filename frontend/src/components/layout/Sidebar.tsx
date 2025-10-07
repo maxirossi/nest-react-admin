@@ -22,7 +22,16 @@ export default function Sidebar({ className }: SidebarProps) {
   };
 
   return (
-    <div className={'sidebar ' + className}>
+    <div 
+      className={'sidebar ' + className}
+      style={{
+        backgroundImage: 'linear-gradient(135deg, rgba(60, 60, 60, 0.95) 0%, rgba(40, 40, 40, 0.95) 100%), url(/sidemenu-bg.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundBlendMode: 'multiply'
+      }}
+    >
       <div className="sidebar-header">
         <Link to="/" className="no-underline">
           <img 
@@ -46,7 +55,7 @@ export default function Sidebar({ className }: SidebarProps) {
         ) : null}
       </nav>
       <button
-        className="sidebar-item text-white rounded-md p-3 transition-colors flex gap-3 justify-center items-center font-semibold focus:outline-none hover:bg-white hover:bg-opacity-20"
+        className="sidebar-logout flex gap-3 justify-center items-center font-semibold focus:outline-none"
         onClick={handleLogout}
       >
         <LogOut /> Logout

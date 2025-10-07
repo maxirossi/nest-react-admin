@@ -69,7 +69,7 @@
   }
   .sidebar {
     @apply fixed h-full w-72 p-5 shadow flex flex-col transform -translate-x-72 lg:translate-x-0 transition-transform;
-    background: linear-gradient(135deg, var(--brand-primary) 0%, #a01e23 100%);
+    background: linear-gradient(135deg, rgba(60, 60, 60, 0.95) 0%, rgba(40, 40, 40, 0.95) 100%);
   }
   .sidebar.show {
     @apply translate-x-0 !important;
@@ -82,12 +82,30 @@
   }
   .sidebar-item {
     @apply flex items-center p-3 rounded-md text-white transition-all mb-2;
+    background-color: var(--brand-primary);
+    border: 1px solid var(--brand-primary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
   .sidebar-item:hover {
-    @apply bg-white bg-opacity-20;
+    background-color: var(--red-hover);
+    border-color: var(--red-hover);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   }
   .sidebar-item.active {
-    @apply bg-white bg-opacity-30;
+    background-color: var(--brand-primary);
+    border-color: var(--brand-primary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  .sidebar-logout {
+    @apply flex items-center p-3 rounded-md text-white transition-all mb-2;
+    background-color: var(--brand-primary);
+    border: 1px solid var(--brand-primary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  .sidebar-logout:hover {
+    background-color: var(--red-hover);
+    border-color: var(--red-hover);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   }
   .main-content {
     @apply lg:ml-72;
