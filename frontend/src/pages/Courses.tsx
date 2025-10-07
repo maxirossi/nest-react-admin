@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Loader, Plus, RefreshCw, X } from 'react-feather';
 import { useForm } from 'react-hook-form';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 
 import CoursesTable from '../components/courses/CoursesTable';
 import Layout from '../components/layout';
@@ -18,6 +18,7 @@ export default function Courses() {
   const [error, setError] = useState<string>();
 
   const { authenticatedUser } = useAuth();
+  const queryClient = useQueryClient();
   const { data, isLoading, refetch } = useQuery(
     ['courses', name, description],
     () =>
@@ -36,11 +37,18 @@ export default function Courses() {
 
   const saveCourse = async (createCourseRequest: CreateCourseRequest) => {
     try {
+      console.log('Saving course...', createCourseRequest);
       await courseService.save(createCourseRequest);
+      console.log('Course saved successfully');
       setAddCourseShow(false);
       reset();
       setError(null);
+      // Invalidar y refrescar los datos automáticamente después de crear
+      console.log('Invalidating queries...');
+      await queryClient.invalidateQueries(['courses']);
+      console.log('Queries invalidated and data refreshed');
     } catch (error) {
+      console.error('Error saving course:', error);
       setError(error.response.data.message);
     }
   };
@@ -89,7 +97,7 @@ export default function Courses() {
         </div>
       </div>
 
-      <CoursesTable data={data} isLoading={isLoading} />
+      <CoursesTable data={data} isLoading={isLoading} onRefresh={refetch} />
 
       {/* Add User Modal */}
       <Modal show={addCourseShow}>

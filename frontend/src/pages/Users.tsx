@@ -48,6 +48,8 @@ export default function Users() {
       setAddUserShow(false);
       setError(null);
       reset();
+      // Refrescar los datos automáticamente después de crear
+      refetch();
     } catch (error) {
       setError(error.response.data.message);
     }
@@ -116,7 +118,7 @@ export default function Users() {
         </div>
       </div>
 
-      <UsersTable data={data} isLoading={isLoading} />
+      <UsersTable data={data} isLoading={isLoading} onRefresh={refetch} />
 
       {/* Add User Modal */}
       <Modal show={addUserShow}>

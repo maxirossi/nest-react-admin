@@ -43,9 +43,9 @@ services:
     container_name: frontend
     build:
       context: frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     ports:
-      - "${FRONTEND_PORT}:${FRONTEND_INTERNAL_PORT}"
+      - "${FRONTEND_PORT}:3000"
     depends_on:
       - backend
     volumes:
@@ -56,6 +56,9 @@ services:
       - ./frontend/tailwind.config.js:/app/tailwind.config.js
       - ./frontend/craco.config.js:/app/craco.config.js
       - ./frontend/tsconfig.json:/app/tsconfig.json
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
 
 volumes:
   postgres_data:

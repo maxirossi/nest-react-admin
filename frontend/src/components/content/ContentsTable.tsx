@@ -14,12 +14,14 @@ interface ContentsTableProps {
   data: Content[];
   courseId: string;
   isLoading: boolean;
+  onRefresh?: () => void;
 }
 
 export default function ContentsTable({
   data,
   isLoading,
   courseId,
+  onRefresh,
 }: ContentsTableProps) {
   const { authenticatedUser } = useAuth();
   const [deleteShow, setDeleteShow] = useState<boolean>(false);
@@ -41,6 +43,8 @@ export default function ContentsTable({
       setIsDeleting(true);
       await contentService.delete(courseId, selectedContentId);
       setDeleteShow(false);
+      // Refrescar los datos después de eliminar
+      if (onRefresh) onRefresh();
     } catch (error) {
       setError(error.response.data.message);
     } finally {
@@ -58,6 +62,8 @@ export default function ContentsTable({
       setUpdateShow(false);
       reset();
       setError(null);
+      // Refrescar los datos después de actualizar
+      if (onRefresh) onRefresh();
     } catch (error) {
       setError(error.response.data.message);
     }

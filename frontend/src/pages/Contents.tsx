@@ -45,6 +45,8 @@ export default function Course() {
       setAddContentShow(false);
       reset();
       setError(null);
+      // Refrescar los datos automáticamente después de crear
+      refetch();
     } catch (error) {
       setError(error.response.data.message);
     }
@@ -96,7 +98,7 @@ export default function Course() {
         </div>
       </div>
 
-      <ContentsTable data={data} isLoading={isLoading} courseId={id} />
+      <ContentsTable data={data} isLoading={isLoading} courseId={id} onRefresh={refetch} />
 
       {/* Add User Modal */}
       <Modal show={addContentShow}>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AlertTriangle, Loader, X } from 'react-feather';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
+import { useQueryClient } from 'react-query';
 
 import useAuth from '../../hooks/useAuth';
 import Course from '../../models/course/Course';
@@ -14,10 +15,12 @@ import TableItem from '../shared/TableItem';
 interface UsersTableProps {
   data: Course[];
   isLoading: boolean;
+  onRefresh?: () => void;
 }
 
-export default function CoursesTable({ data, isLoading }: UsersTableProps) {
+export default function CoursesTable({ data, isLoading, onRefresh }: UsersTableProps) {
   const { authenticatedUser } = useAuth();
+  const queryClient = useQueryClient();
   const [deleteShow, setDeleteShow] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [selectedCourseId, setSelectedCourseId] = useState<string>();
@@ -37,6 +40,8 @@ export default function CoursesTable({ data, isLoading }: UsersTableProps) {
       setIsDeleting(true);
       await courseService.delete(selectedCourseId);
       setDeleteShow(false);
+      // Invalidar y refrescar los datos después de eliminar
+      await queryClient.invalidateQueries(['courses']);
     } catch (error) {
       setError(error.response.data.message);
     } finally {
@@ -50,6 +55,8 @@ export default function CoursesTable({ data, isLoading }: UsersTableProps) {
       setUpdateShow(false);
       reset();
       setError(null);
+      // Invalidar y refrescar los datos después de actualizar
+      await queryClient.invalidateQueries(['courses']);
     } catch (error) {
       setError(error.response.data.message);
     }
