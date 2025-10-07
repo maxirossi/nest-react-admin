@@ -61,6 +61,7 @@ services:
       - WATCHPACK_POLLING=true
       - REACT_APP_DEFAULT_PAGE_SIZE=10
       - REACT_APP_MAX_PAGE_SIZE=100
+      - NODE_ENV=development
 
 volumes:
   postgres_data:

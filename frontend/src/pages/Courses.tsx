@@ -3,8 +3,8 @@ import { Loader, Plus, RefreshCw, X } from 'react-feather';
 import { useForm } from 'react-hook-form';
 import { useQuery, useQueryClient } from 'react-query';
 
-import usePagination from '../hooks/usePagination';
 import Pagination from '../components/shared/Pagination';
+import usePagination from '../hooks/usePagination';
 
 import CoursesTable from '../components/courses/CoursesTable';
 import Layout from '../components/layout';

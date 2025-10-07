@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 
 interface UsePaginationProps {
   totalItems: number;
@@ -23,10 +23,25 @@ interface UsePaginationReturn {
   goToLastPage: () => void;
 }
 
+// Get environment variables safely
+const getDefaultPageSize = (): number => {
+  if (typeof window !== 'undefined' && (window as any).process?.env?.REACT_APP_DEFAULT_PAGE_SIZE) {
+    return parseInt((window as any).process.env.REACT_APP_DEFAULT_PAGE_SIZE, 10);
+  }
+  return 10;
+};
+
+const getMaxPageSize = (): number => {
+  if (typeof window !== 'undefined' && (window as any).process?.env?.REACT_APP_MAX_PAGE_SIZE) {
+    return parseInt((window as any).process.env.REACT_APP_MAX_PAGE_SIZE, 10);
+  }
+  return 100;
+};
+
 export default function usePagination({
   totalItems,
-  defaultPageSize = parseInt(process.env.REACT_APP_DEFAULT_PAGE_SIZE || '10'),
-  maxPageSize = parseInt(process.env.REACT_APP_MAX_PAGE_SIZE || '100'),
+  defaultPageSize = getDefaultPageSize(),
+  maxPageSize = getMaxPageSize(),
 }: UsePaginationProps): UsePaginationReturn {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(defaultPageSize);
