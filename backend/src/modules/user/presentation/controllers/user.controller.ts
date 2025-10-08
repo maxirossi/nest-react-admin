@@ -13,7 +13,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 
 import { JwtGuard } from '../../../../auth/guards/jwt.guard';
 import { RolesGuard } from '../../../../auth/guards/roles.guard';
@@ -47,12 +47,61 @@ export class UserController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @Roles(Role.Admin)
+  @ApiOperation({ 
+    summary: 'Create a new user',
+    description: 'Create a new user with DDD architecture. Requires Admin role.'
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'User created successfully',
+    type: UserResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad Request - Invalid user data',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - Invalid token',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Insufficient permissions',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Conflict - User already exists',
+  })
   async save(@Body() createUserDto: CreateUserDto): Promise<UserResponseDto> {
     return this.createUserUseCase.execute(createUserDto);
   }
 
   @Get()
   @Roles(Role.Admin)
+  @ApiOperation({ 
+    summary: 'Get all users',
+    description: 'Retrieve all users with DDD architecture. Requires Admin role.'
+  })
+  @ApiQuery({ name: 'firstName', required: false, description: 'Filter by first name' })
+  @ApiQuery({ name: 'lastName', required: false, description: 'Filter by last name' })
+  @ApiQuery({ name: 'username', required: false, description: 'Filter by username' })
+  @ApiQuery({ name: 'role', required: false, description: 'Filter by role' })
+  @ApiQuery({ name: 'isActive', required: false, description: 'Filter by active status' })
+  @ApiQuery({ name: 'page', required: false, description: 'Page number for pagination' })
+  @ApiQuery({ name: 'limit', required: false, description: 'Number of items per page' })
+  @ApiResponse({
+    status: 200,
+    description: 'Users retrieved successfully',
+    type: [UserResponseDto],
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - Invalid token',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Insufficient permissions',
+  })
   async findAll(@Query() userQuery: UserQueryDto): Promise<UserResponseDto[]> {
     return this.getUsersUseCase.execute(userQuery);
   }

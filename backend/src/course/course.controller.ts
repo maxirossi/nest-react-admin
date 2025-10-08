@@ -9,7 +9,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -36,16 +36,72 @@ export class CourseController {
 
   @Post()
   @Roles(Role.Admin, Role.Editor)
+  @ApiOperation({ 
+    summary: 'Create a new course',
+    description: 'Create a new course. Requires Admin or Editor role.'
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Course created successfully',
+    type: Course,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad Request - Invalid course data',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - Invalid token',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Insufficient permissions',
+  })
   async save(@Body() createCourseDto: CreateCourseDto): Promise<Course> {
     return await this.courseService.save(createCourseDto);
   }
 
   @Get()
+  @ApiOperation({ 
+    summary: 'Get all courses',
+    description: 'Retrieve all courses with optional filtering and pagination.'
+  })
+  @ApiQuery({ name: 'name', required: false, description: 'Filter by course name' })
+  @ApiQuery({ name: 'description', required: false, description: 'Filter by course description' })
+  @ApiQuery({ name: 'page', required: false, description: 'Page number for pagination' })
+  @ApiQuery({ name: 'limit', required: false, description: 'Number of items per page' })
+  @ApiResponse({
+    status: 200,
+    description: 'Courses retrieved successfully',
+    type: [Course],
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - Invalid token',
+  })
   async findAll(@Query() courseQuery: CourseQuery): Promise<Course[]> {
     return await this.courseService.findAll(courseQuery);
   }
 
   @Get('/:id')
+  @ApiOperation({ 
+    summary: 'Get course by ID',
+    description: 'Retrieve a specific course by its ID.'
+  })
+  @ApiParam({ name: 'id', description: 'Course ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Course retrieved successfully',
+    type: Course,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Course not found',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - Invalid token',
+  })
   async findOne(@Param('id') id: string): Promise<Course> {
     return await this.courseService.findById(id);
   }
