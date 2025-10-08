@@ -39,7 +39,7 @@ class UserService {
 
   async update(
     id: string,
-    updateCourseRequest: UpdateCourseRequest,
+    updateCourseRequest: UpdateCourseRequest
   ): Promise<void> {
     await apiService.put(`/api/courses/${id}`, updateCourseRequest);
   }
@@ -49,4 +49,5 @@ class UserService {
   }
 }
 
-export default new UserService();
+const courseService = new UserService();
+export default courseService;

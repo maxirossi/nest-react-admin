@@ -1,15 +1,13 @@
 import { useState } from 'react';
-import { Loader, Plus, RefreshCw, X } from 'react-feather';
+import { Loader, Plus, X } from 'react-feather';
 import { useForm } from 'react-hook-form';
 import { useQuery, useQueryClient } from 'react-query';
-
-import Pagination from '../components/shared/Pagination';
-import usePagination from '../hooks/usePagination';
 
 import CoursesTable from '../components/courses/CoursesTable';
 import Layout from '../components/layout';
 import Modal from '../components/shared/Modal';
 import useAuth from '../hooks/useAuth';
+import useDebounce from '../hooks/useDebounce';
 import CreateCourseRequest from '../models/course/CreateCourseRequest';
 import courseService from '../services/CourseService';
 
@@ -22,19 +20,24 @@ export default function Courses() {
 
   const { authenticatedUser } = useAuth();
   const queryClient = useQueryClient();
-  
-  const { data, isLoading, refetch } = useQuery(
-    ['courses', name, description],
+
+  // Debounce para los filtros
+  const debouncedName = useDebounce(name, 500);
+  const debouncedDescription = useDebounce(description, 500);
+
+  // Solo buscar si tiene 3 o más caracteres
+  const searchName = debouncedName.length >= 3 ? debouncedName : '';
+  const searchDescription =
+    debouncedDescription.length >= 3 ? debouncedDescription : '';
+
+  const { data, isLoading } = useQuery(
+    ['courses', searchName, searchDescription],
     () =>
       courseService.findAll({
-        name: name || undefined,
-        description: description || undefined,
-      }),
+        name: searchName || undefined,
+        description: searchDescription || undefined,
+      })
   );
-
-  const pagination = usePagination({
-    totalItems: data?.length || 0,
-  });
 
   const {
     register,
@@ -45,18 +48,13 @@ export default function Courses() {
 
   const saveCourse = async (createCourseRequest: CreateCourseRequest) => {
     try {
-      console.log('Saving course...', createCourseRequest);
       await courseService.save(createCourseRequest);
-      console.log('Course saved successfully');
       setAddCourseShow(false);
       reset();
       setError(null);
-      // Invalidar y refrescar los datos automáticamente después de crear
-      console.log('Invalidating queries...');
+      // Refresh automático después de crear
       await queryClient.invalidateQueries(['courses']);
-      console.log('Queries invalidated and data refreshed');
     } catch (error) {
-      console.error('Error saving course:', error);
       setError(error.response.data.message);
     }
   };
@@ -66,14 +64,6 @@ export default function Courses() {
       <div className="flex justify-between items-center mb-5">
         <h1 className="font-semibold text-3xl">Manage Courses</h1>
         <div className="flex gap-2">
-          <button
-            className="btn flex gap-2"
-            onClick={() => refetch()}
-            disabled={isLoading}
-          >
-            <RefreshCw className={isLoading ? 'animate-spin' : ''} />
-            Refresh
-          </button>
           {authenticatedUser.role !== 'user' ? (
             <button
               className="btn flex gap-2"
@@ -105,28 +95,7 @@ export default function Courses() {
         </div>
       </div>
 
-      <CoursesTable 
-        data={data?.slice(pagination.startIndex, pagination.endIndex)} 
-        isLoading={isLoading} 
-        onRefresh={refetch} 
-      />
-      
-      {data && data.length > 0 && (
-        <Pagination
-          currentPage={pagination.currentPage}
-          totalPages={pagination.totalPages}
-          pageSize={pagination.pageSize}
-          totalItems={data?.length || 0}
-          hasNextPage={pagination.hasNextPage}
-          hasPreviousPage={pagination.hasPreviousPage}
-          onPageChange={pagination.setCurrentPage}
-          onPageSizeChange={pagination.setPageSize}
-          onNextPage={pagination.goToNextPage}
-          onPreviousPage={pagination.goToPreviousPage}
-          onFirstPage={pagination.goToFirstPage}
-          onLastPage={pagination.goToLastPage}
-        />
-      )}
+      <CoursesTable data={data} isLoading={isLoading} />
 
       {/* Add User Modal */}
       <Modal show={addCourseShow}>

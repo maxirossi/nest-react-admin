@@ -23,7 +23,7 @@ class UserService {
 
   async update(
     id: string,
-    updateUserRequest: UpdateUserRequest,
+    updateUserRequest: UpdateUserRequest
   ): Promise<void> {
     const { firstName, isActive, lastName, password, role, username } =
       updateUserRequest;
@@ -32,7 +32,7 @@ class UserService {
       lastName: lastName || undefined,
       username: username || undefined,
       role: role || undefined,
-      isActive: isActive,
+      isActive,
       password: password || undefined,
     });
   }
@@ -42,4 +42,5 @@ class UserService {
   }
 }
 
-export default new UserService();
+const userService = new UserService();
+export default userService;

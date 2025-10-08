@@ -7,7 +7,7 @@ import apiService from './ApiService';
 class ContentService {
   async findAll(
     courseId: string,
-    contentQuery: ContentQuery,
+    contentQuery: ContentQuery
   ): Promise<Content[]> {
     return (
       await apiService.get<Content[]>(`/api/courses/${courseId}/contents`, {
@@ -18,22 +18,22 @@ class ContentService {
 
   async save(
     courseId: string,
-    createContentRequest: CreateContentRequest,
+    createContentRequest: CreateContentRequest
   ): Promise<void> {
     await apiService.post(
       `/api/courses/${courseId}/contents`,
-      createContentRequest,
+      createContentRequest
     );
   }
 
   async update(
     courseId: string,
     id: string,
-    updateContentRequest: UpdateContentRequest,
+    updateContentRequest: UpdateContentRequest
   ): Promise<void> {
     await apiService.put(
       `/api/courses/${courseId}/contents/${id}`,
-      updateContentRequest,
+      updateContentRequest
     );
   }
 
@@ -42,4 +42,5 @@ class ContentService {
   }
 }
 
-export default new ContentService();
+const contentService = new ContentService();
+export default contentService;

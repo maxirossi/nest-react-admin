@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AlertTriangle, Loader, X } from 'react-feather';
 import { useForm } from 'react-hook-form';
+import { useQueryClient } from 'react-query';
 
 import useAuth from '../../hooks/useAuth';
 import Content from '../../models/content/Content';
@@ -14,16 +15,15 @@ interface ContentsTableProps {
   data: Content[];
   courseId: string;
   isLoading: boolean;
-  onRefresh?: () => void;
 }
 
 export default function ContentsTable({
   data,
   isLoading,
   courseId,
-  onRefresh,
 }: ContentsTableProps) {
   const { authenticatedUser } = useAuth();
+  const queryClient = useQueryClient();
   const [deleteShow, setDeleteShow] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [selectedContentId, setSelectedContentId] = useState<string>();
@@ -43,8 +43,8 @@ export default function ContentsTable({
       setIsDeleting(true);
       await contentService.delete(courseId, selectedContentId);
       setDeleteShow(false);
-      // Refrescar los datos después de eliminar
-      if (onRefresh) onRefresh();
+      // Refresh automático después de eliminar
+      await queryClient.invalidateQueries([`contents-${courseId}`]);
     } catch (error) {
       setError(error.response.data.message);
     } finally {
@@ -57,13 +57,13 @@ export default function ContentsTable({
       await contentService.update(
         courseId,
         selectedContentId,
-        updateContentRequest,
+        updateContentRequest
       );
       setUpdateShow(false);
       reset();
       setError(null);
-      // Refrescar los datos después de actualizar
-      if (onRefresh) onRefresh();
+      // Refresh automático después de actualizar
+      await queryClient.invalidateQueries([`contents-${courseId}`]);
     } catch (error) {
       setError(error.response.data.message);
     }
@@ -85,7 +85,7 @@ export default function ContentsTable({
                   <TableItem className="text-right">
                     {['admin', 'editor'].includes(authenticatedUser.role) ? (
                       <button
-                        className="text-indigo-600 hover:text-indigo-900 focus:outline-none"
+                        className="btn-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors"
                         onClick={() => {
                           setSelectedContentId(id);
 
@@ -100,7 +100,7 @@ export default function ContentsTable({
                     ) : null}
                     {authenticatedUser.role === 'admin' ? (
                       <button
-                        className="text-red-600 hover:text-red-900 ml-3 focus:outline-none"
+                        className="btn-sm bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors ml-3"
                         onClick={() => {
                           setSelectedContentId(id);
                           setDeleteShow(true);

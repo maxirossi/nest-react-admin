@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AlertTriangle, Loader, X } from 'react-feather';
 import { useForm } from 'react-hook-form';
+import { useQueryClient } from 'react-query';
 
 import UpdateUserRequest from '../../models/user/UpdateUserRequest';
 import User from '../../models/user/User';
@@ -12,10 +13,10 @@ import TableItem from '../shared/TableItem';
 interface UsersTableProps {
   data: User[];
   isLoading: boolean;
-  onRefresh?: () => void;
 }
 
-export default function UsersTable({ data, isLoading, onRefresh }: UsersTableProps) {
+export default function UsersTable({ data, isLoading }: UsersTableProps) {
+  const queryClient = useQueryClient();
   const [deleteShow, setDeleteShow] = useState<boolean>(false);
   const [updateShow, setUpdateShow] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -35,8 +36,8 @@ export default function UsersTable({ data, isLoading, onRefresh }: UsersTablePro
       setIsDeleting(true);
       await userService.delete(selectedUserId);
       setDeleteShow(false);
-      // Refrescar los datos después de eliminar
-      if (onRefresh) onRefresh();
+      // Refresh automático después de eliminar
+      await queryClient.invalidateQueries(['users']);
     } catch (error) {
       setError(error.response.data.message);
     } finally {
@@ -50,8 +51,8 @@ export default function UsersTable({ data, isLoading, onRefresh }: UsersTablePro
       setUpdateShow(false);
       reset();
       setError(null);
-      // Refrescar los datos después de actualizar
-      if (onRefresh) onRefresh();
+      // Refresh automático después de actualizar
+      await queryClient.invalidateQueries(['users']);
     } catch (error) {
       setError(error.response.data.message);
     }
@@ -82,7 +83,7 @@ export default function UsersTable({ data, isLoading, onRefresh }: UsersTablePro
                     <TableItem>{role}</TableItem>
                     <TableItem className="text-right">
                       <button
-                        className="text-indigo-600 hover:text-indigo-900 focus:outline-none"
+                        className="btn-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors"
                         onClick={() => {
                           setSelectedUserId(id);
 
@@ -98,7 +99,7 @@ export default function UsersTable({ data, isLoading, onRefresh }: UsersTablePro
                         Edit
                       </button>
                       <button
-                        className="text-red-600 hover:text-red-900 ml-3 focus:outline-none"
+                        className="btn-sm bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors ml-3"
                         onClick={() => {
                           setSelectedUserId(id);
                           setDeleteShow(true);
@@ -108,7 +109,7 @@ export default function UsersTable({ data, isLoading, onRefresh }: UsersTablePro
                       </button>
                     </TableItem>
                   </tr>
-                ),
+                )
               )}
         </Table>
 

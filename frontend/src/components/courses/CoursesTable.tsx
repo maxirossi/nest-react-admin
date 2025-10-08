@@ -15,10 +15,9 @@ import TableItem from '../shared/TableItem';
 interface UsersTableProps {
   data: Course[];
   isLoading: boolean;
-  onRefresh?: () => void;
 }
 
-export default function CoursesTable({ data, isLoading, onRefresh }: UsersTableProps) {
+export default function CoursesTable({ data, isLoading }: UsersTableProps) {
   const { authenticatedUser } = useAuth();
   const queryClient = useQueryClient();
   const [deleteShow, setDeleteShow] = useState<boolean>(false);
@@ -40,7 +39,7 @@ export default function CoursesTable({ data, isLoading, onRefresh }: UsersTableP
       setIsDeleting(true);
       await courseService.delete(selectedCourseId);
       setDeleteShow(false);
-      // Invalidar y refrescar los datos después de eliminar
+      // Refresh automático después de eliminar
       await queryClient.invalidateQueries(['courses']);
     } catch (error) {
       setError(error.response.data.message);
@@ -55,7 +54,7 @@ export default function CoursesTable({ data, isLoading, onRefresh }: UsersTableP
       setUpdateShow(false);
       reset();
       setError(null);
-      // Invalidar y refrescar los datos después de actualizar
+      // Refresh automático después de actualizar
       await queryClient.invalidateQueries(['courses']);
     } catch (error) {
       setError(error.response.data.message);
@@ -80,7 +79,7 @@ export default function CoursesTable({ data, isLoading, onRefresh }: UsersTableP
                   <TableItem className="text-right">
                     {['admin', 'editor'].includes(authenticatedUser.role) ? (
                       <button
-                        className="text-indigo-600 hover:text-indigo-900 focus:outline-none"
+                        className="btn-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors"
                         onClick={() => {
                           setSelectedCourseId(id);
 
@@ -95,7 +94,7 @@ export default function CoursesTable({ data, isLoading, onRefresh }: UsersTableP
                     ) : null}
                     {authenticatedUser.role === 'admin' ? (
                       <button
-                        className="text-red-600 hover:text-red-900 ml-3 focus:outline-none"
+                        className="btn-sm bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors ml-3"
                         onClick={() => {
                           setSelectedCourseId(id);
                           setDeleteShow(true);

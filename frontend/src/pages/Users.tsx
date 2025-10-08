@@ -1,17 +1,19 @@
 import { useState } from 'react';
-import { Loader, Plus, RefreshCw, X } from 'react-feather';
+import { Loader, Plus, X } from 'react-feather';
 import { useForm } from 'react-hook-form';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 
 import Layout from '../components/layout';
 import Modal from '../components/shared/Modal';
 import UsersTable from '../components/users/UsersTable';
 import useAuth from '../hooks/useAuth';
+import useDebounce from '../hooks/useDebounce';
 import CreateUserRequest from '../models/user/CreateUserRequest';
 import userService from '../services/UserService';
 
 export default function Users() {
   const { authenticatedUser } = useAuth();
+  const queryClient = useQueryClient();
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -21,18 +23,29 @@ export default function Users() {
   const [addUserShow, setAddUserShow] = useState<boolean>(false);
   const [error, setError] = useState<string>();
 
-  const { data, isLoading, refetch } = useQuery(
-    ['users', firstName, lastName, username, role],
+  // Debounce para los filtros
+  const debouncedFirstName = useDebounce(firstName, 500);
+  const debouncedLastName = useDebounce(lastName, 500);
+  const debouncedUsername = useDebounce(username, 500);
+
+  // Solo buscar si tiene 3 o más caracteres
+  const searchFirstName =
+    debouncedFirstName.length >= 3 ? debouncedFirstName : '';
+  const searchLastName = debouncedLastName.length >= 3 ? debouncedLastName : '';
+  const searchUsername = debouncedUsername.length >= 3 ? debouncedUsername : '';
+
+  const { data, isLoading } = useQuery(
+    ['users', searchFirstName, searchLastName, searchUsername, role],
     async () => {
       return (
         await userService.findAll({
-          firstName: firstName || undefined,
-          lastName: lastName || undefined,
-          username: username || undefined,
+          firstName: searchFirstName || undefined,
+          lastName: searchLastName || undefined,
+          username: searchUsername || undefined,
           role: role || undefined,
         })
       ).filter((user) => user.id !== authenticatedUser.id);
-    },
+    }
   );
 
   const {
@@ -48,8 +61,8 @@ export default function Users() {
       setAddUserShow(false);
       setError(null);
       reset();
-      // Refrescar los datos automáticamente después de crear
-      refetch();
+      // Refresh automático después de crear
+      await queryClient.invalidateQueries(['users']);
     } catch (error) {
       setError(error.response.data.message);
     }
@@ -60,14 +73,6 @@ export default function Users() {
       <div className="flex justify-between items-center mb-5">
         <h1 className="font-semibold text-3xl">Manage Users</h1>
         <div className="flex gap-2">
-          <button
-            className="btn flex gap-2"
-            onClick={() => refetch()}
-            disabled={isLoading}
-          >
-            <RefreshCw className={isLoading ? 'animate-spin' : ''} />
-            Refresh
-          </button>
           <button
             className="btn flex gap-2"
             onClick={() => setAddUserShow(true)}
@@ -118,7 +123,7 @@ export default function Users() {
         </div>
       </div>
 
-      <UsersTable data={data} isLoading={isLoading} onRefresh={refetch} />
+      <UsersTable data={data} isLoading={isLoading} />
 
       {/* Add User Modal */}
       <Modal show={addUserShow}>
